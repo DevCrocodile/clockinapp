@@ -4,8 +4,5 @@ import { ClockinView } from "@/components/clockin/ClockinView";
 ---
 
 <Layout>
-	<ClockinView
-		onAdminAccess={() => console.log("Admin access")}
-		client:only="react"
-	/>
+	<ClockinView client:only="react" />
 </Layout>

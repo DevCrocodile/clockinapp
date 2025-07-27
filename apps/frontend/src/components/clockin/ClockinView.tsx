@@ -3,11 +3,7 @@ import { Button } from '../shared/Button'
 import { Card } from '../shared/Card'
 import { useCurrentTime } from '@hooks/useCurrentTime'
 
-interface ClockinViewProps {
-  onAdminAccess: () => void
-}
-
-export function ClockinView ({ onAdminAccess }: ClockinViewProps): React.ReactElement {
+export function ClockinView (): React.ReactElement {
   const { currentTime } = useCurrentTime()
 
   return (
@@ -51,7 +47,7 @@ export function ClockinView ({ onAdminAccess }: ClockinViewProps): React.ReactEl
       </Card>
 
       {/* Admin Access */}
-      <Button onClick={onAdminAccess} variant='ghost' className='mt-8 text-[#004E64] hover:text-[#004E64]/80'>
+      <Button onClick={() => (window.location.href = '/admin')} variant='ghost' className='mt-8 text-[#004E64] hover:text-[#004E64]/80'>
         <Settings className='w-4 h-4 mr-2' />
         Acceso Administrador
       </Button>
