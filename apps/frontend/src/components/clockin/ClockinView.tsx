@@ -1,7 +1,7 @@
 import { KeyRound, Fingerprint, Settings } from 'lucide-react'
 import { Button } from '../shared/Button'
 import { Card } from '../shared/Card'
-import { useCurrentTime } from '@/hooks/useCurrentTime'
+import { useCurrentTime } from '@hooks/useCurrentTime'
 
 interface ClockinViewProps {
   onPinLogin: () => void
