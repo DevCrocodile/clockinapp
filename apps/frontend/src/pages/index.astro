@@ -4,5 +4,5 @@ import { ClockinView } from "@/components/clockin/ClockinView"
 ---
 
 <Layout>
-	<ClockinView onFingerprintScan={()=>console.log('Fingerprint scanned')} onPinLogin={()=>console.log('PIN login')} onAdminAccess={()=>console.log('Admin access')} client:load/>
+	<ClockinView  onPinLogin={()=>console.log('PIN login')} onAdminAccess={()=>console.log('Admin access')} client:load/>
 </Layout>

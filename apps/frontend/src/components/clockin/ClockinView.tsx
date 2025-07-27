@@ -1,23 +1,15 @@
 import { KeyRound, Fingerprint, Settings } from 'lucide-react'
 import { Button } from '../shared/Button'
 import { Card } from '../shared/Card'
-import { useState, useEffect } from 'react'
+import { useCurrentTime } from '@/hooks/useCurrentTime'
 
 interface ClockinViewProps {
-  onFingerprintScan: () => void
   onPinLogin: () => void
   onAdminAccess: () => void
 }
 
-export function ClockinView ({ onFingerprintScan, onPinLogin, onAdminAccess }: ClockinViewProps): React.ReactElement {
-  const [currentTime, setCurrentTime] = useState(new Date())
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+export function ClockinView ({ onPinLogin, onAdminAccess }: ClockinViewProps): React.ReactElement {
+  const { currentTime } = useCurrentTime()
 
   return (
     <div className='min-h-screen flex flex-col items-center justify-center p-8 bg-[#F4F6F8]'>
