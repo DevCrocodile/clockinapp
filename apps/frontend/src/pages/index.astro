@@ -1,8 +1,11 @@
 ---
-import Layout from "../layout/layout.astro"
-import { ClockinView } from "@/components/clockin/ClockinView"
+import Layout from "../layout/layout.astro";
+import { ClockinView } from "@/components/clockin/ClockinView";
 ---
 
 <Layout>
-	<ClockinView  onPinLogin={()=>console.log('PIN login')} onAdminAccess={()=>console.log('Admin access')} client:load/>
+	<ClockinView
+		onAdminAccess={() => console.log("Admin access")}
+		client:only="react"
+	/>
 </Layout>

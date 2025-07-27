@@ -3,20 +3,97 @@ import { ArrowLeft } from 'lucide-react'
 import { Card } from '../shared/Card'
 import { Input } from '../shared/Input'
 import { useField } from '@/hooks/useField'
+import { useState } from 'react'
+import { ConfirmationScreen } from './ConfirmationScreen'
+
+interface ConfirmationData {
+  type: 'success' | 'error'
+  message: string
+  employeeName?: string
+  time?: string
+}
+
+interface Employee {
+  id: string
+  name: string
+  email: string
+  pin: string
+  isActive: boolean
+  hasFingerprint: boolean
+}
+
+interface ClockRecord {
+  id: string
+  employeeId: string
+  employeeName: string
+  date: string
+  clockIn?: string
+  clockOut?: string
+}
 
 interface PinLoginScreenProps {
   onPinSubmit: (pin: string) => void
-  onBack: () => void
 }
 
-export function PinLoginView ({ onPinSubmit, onBack }: PinLoginScreenProps): React.ReactElement {
+export function PinLoginView ({ onPinSubmit }: PinLoginScreenProps): React.ReactElement {
+  const [employees] = useState<Employee[]>([
+    { id: '1', name: 'Juan Pérez', email: 'juan@empresa.com', pin: '1234', isActive: true, hasFingerprint: true },
+    { id: '2', name: 'María García', email: 'maria@empresa.com', pin: '5678', isActive: true, hasFingerprint: false },
+    { id: '3', name: 'Carlos López', email: 'carlos@empresa.com', pin: '9012', isActive: false, hasFingerprint: true }
+  ])
+
+  const [clockRecords] = useState<ClockRecord[]>([
+    { id: '1', employeeId: '1', employeeName: 'Juan Pérez', date: '2024-01-15', clockIn: '08:03', clockOut: '17:30' },
+    { id: '2', employeeId: '2', employeeName: 'María García', date: '2024-01-15', clockIn: '08:15', clockOut: '17:45' },
+    { id: '3', employeeId: '1', employeeName: 'Juan Pérez', date: '2024-01-16', clockIn: '08:00' }
+  ])
+
+  const [confirmationData, setConfirmationData] = useState<ConfirmationData | null>(null)
+
+  const handlePinLogin = (pin: string): void => {
+    const employee = employees.find((e) => e.pin === pin && e.isActive)
+
+    if (employee == null) {
+      setConfirmationData({
+        type: 'error',
+        message: 'PIN incorrecto o empleado deshabilitado'
+      })
+      return
+    }
+
+    const today = new Date().toISOString().split('T')[0]
+    const currentTime = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    const todayRecord = clockRecords.find((r) => r.employeeId === employee.id && r.date === today)
+
+    if (todayRecord == null) {
+      setConfirmationData({
+        type: 'success',
+        message: '¡Clock In registrado exitosamente!',
+        employeeName: employee.name,
+        time: currentTime
+      })
+    } else if (todayRecord.clockOut !== undefined) {
+      setConfirmationData({
+        type: 'success',
+        message: '¡Clock Out registrado exitosamente!',
+        employeeName: employee.name,
+        time: currentTime
+      })
+    } else {
+      setConfirmationData({
+        type: 'error',
+        message: 'Ya completaste tu jornada laboral hoy',
+        employeeName: employee.name
+      })
+    }
+  }
   const pin = useField({ type: 'password', required: true })
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault()
     if (pin.value.length < 4) {
       return
     }
-    onPinSubmit(pin.value)
+    handlePinLogin(pin.value)
   }
 
   const handlePinChange = (value: string): void => {
@@ -26,11 +103,15 @@ export function PinLoginView ({ onPinSubmit, onBack }: PinLoginScreenProps): Rea
       pin.setValue(numericValue)
     }
   }
+
+  if (confirmationData !== null) {
+    return <ConfirmationScreen data={confirmationData} onReturn={() => (window.location.href = '/')} />
+  }
   return (
     <div className='min-h-screen flex flex-col items-center justify-center p-8 bg-[#F4F6F8]'>
       <div className='w-full max-w-md'>
         {/* Back Button */}
-        <Button onClick={onBack} variant='ghost' className='mb-6 text-[#004E64] hover:text-[#004E64]/80'>
+        <Button onClick={() => (window.location.href = '/')} variant='ghost' className='mb-6 text-[#004E64] hover:text-[#004E64]/80'>
           <ArrowLeft className='w-4 h-4 mr-2' />
           Volver
         </Button>

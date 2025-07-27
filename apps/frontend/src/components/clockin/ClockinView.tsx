@@ -4,11 +4,10 @@ import { Card } from '../shared/Card'
 import { useCurrentTime } from '@hooks/useCurrentTime'
 
 interface ClockinViewProps {
-  onPinLogin: () => void
   onAdminAccess: () => void
 }
 
-export function ClockinView ({ onPinLogin, onAdminAccess }: ClockinViewProps): React.ReactElement {
+export function ClockinView ({ onAdminAccess }: ClockinViewProps): React.ReactElement {
   const { currentTime } = useCurrentTime()
 
   return (
@@ -30,7 +29,7 @@ export function ClockinView ({ onPinLogin, onAdminAccess }: ClockinViewProps): R
           {/* PIN Login Button */}
           <div className='space-y-4'>
             <Button
-              onClick={onPinLogin}
+              onClick={() => (window.location.href = '/pin')}
               className='w-full h-16 bg-[#FF914D] hover:bg-[#FF914D]/90 text-white text-lg font-medium shadow-lg'
             >
               <KeyRound className='w-6 h-6 mr-3' />
