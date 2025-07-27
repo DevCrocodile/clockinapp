@@ -5,31 +5,7 @@ import { Input } from '../shared/Input'
 import { useField } from '@/hooks/useField'
 import { useState } from 'react'
 import { ConfirmationScreen } from './ConfirmationScreen'
-
-interface ConfirmationData {
-  type: 'success' | 'error'
-  message: string
-  employeeName?: string
-  time?: string
-}
-
-interface Employee {
-  id: string
-  name: string
-  email: string
-  pin: string
-  isActive: boolean
-  hasFingerprint: boolean
-}
-
-interface ClockRecord {
-  id: string
-  employeeId: string
-  employeeName: string
-  date: string
-  clockIn?: string
-  clockOut?: string
-}
+import type { ClockRecord, ConfirmationData, Employee } from '@/types'
 
 interface PinLoginScreenProps {
   onPinSubmit: (pin: string) => void

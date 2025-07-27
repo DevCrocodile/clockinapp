@@ -16,3 +16,28 @@ export interface FieldTextAreaProps {
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
   required?: boolean
 }
+
+export interface ConfirmationData {
+  type: 'success' | 'error'
+  message: string
+  employeeName?: string
+  time?: string
+}
+
+export interface Employee {
+  id: string
+  name: string
+  email: string
+  pin: string
+  isActive: boolean
+  hasFingerprint: boolean
+}
+
+export interface ClockRecord {
+  id: string
+  employeeId: string
+  employeeName: string
+  date: string
+  clockIn?: string
+  clockOut?: string
+}

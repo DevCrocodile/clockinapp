@@ -1,0 +1,13 @@
+---
+import Layout from "@/layout/layout.astro";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
+---
+
+<Layout>
+    <AdminDashboard
+        employees={[]}
+        clockRecords={[]}
+        onLogout={() => {}}
+        client:load
+    />
+</Layout>
