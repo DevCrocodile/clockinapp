@@ -7,6 +7,27 @@ import { AdminDashboard } from "@/components/admin/AdminDashboard";
     <AdminDashboard
         employees={[]}
         clockRecords={[]}
+        availableBranches={[
+            {
+                name: "Main Branch",
+                id: "1",
+                address: "123 Main St",
+                phone: "123-456-7890",
+                manager: "John Doe",
+                isActive: true,
+                createdAt: new Date().toISOString(),
+            },
+        ]}
+        currentBranch={{
+            name: "Main Branch",
+            id: "1",
+            address: "123 Main St",
+            phone: "123-456-7890",
+            manager: "John Doe",
+            isActive: true,
+            createdAt: new Date().toISOString(),
+        }}
+        onBranchChange={() => {}}
         onLogout={() => {}}
         client:load
     />

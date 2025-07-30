@@ -1,21 +1,31 @@
 import { Card, CardHeader, CardTitle, CardContent } from '../shared/Card'
 import { Button } from '../shared/Button'
-import { LogOut, Users, UserCheck, UserX, FileText, Clock } from 'lucide-react'
-import type { Employee, ClockRecord } from '@/types'
+import { LogOut, Users, FileText, Building, Calendar, MapPin, UserPlus, Settings } from 'lucide-react'
+import type { Employee, ClockRecord, Branch } from '@/types'
 
 interface AdminDashboardProps {
   employees: Employee[]
   clockRecords: ClockRecord[]
+  currentBranch: Branch
+  availableBranches: Branch[]
+  onBranchChange: (branch: Branch) => void
   onLogout: () => void
 }
 
-export function AdminDashboard ({ employees, clockRecords, onLogout }: AdminDashboardProps): React.ReactElement {
-  const today = new Date().toISOString().split('T')[0]
-  const todayRecords = clockRecords.filter((record) => record.date === today)
-
-  const activeEmployees = employees.filter((emp) => emp.isActive).length
-  const clockInsToday = todayRecords.filter((record) => record.clockIn).length
-  const clockOutsToday = todayRecords.filter((record) => record.clockOut).length
+export function AdminDashboard ({
+  employees,
+  clockRecords,
+  currentBranch,
+  availableBranches,
+  onBranchChange,
+  onLogout
+}: AdminDashboardProps): React.ReactElement {
+  const today = new Date()
+  const currentDate = today.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 
   return (
     <div className='min-h-screen bg-[#F4F6F8]'>
@@ -23,15 +33,30 @@ export function AdminDashboard ({ employees, clockRecords, onLogout }: AdminDash
       <div className='bg-white shadow-sm border-b'>
         <div className='max-w-7xl mx-auto px-6 py-4'>
           <div className='flex items-center justify-between'>
-            <div className='flex items-center space-x-4'>
-              <div className='w-10 h-10 bg-[#004E64] rounded-lg flex items-center justify-center'>
-                <span className='text-white font-bold'>A</span>
+            <div className='flex items-center space-x-6'>
+              <div className='flex items-center space-x-4'>
+                <div className='w-10 h-10 bg-[#004E64] rounded-lg flex items-center justify-center'>
+                  <span className='text-white font-bold'>A</span>
+                </div>
+                <div>
+                  <h1 className='text-2xl font-bold text-[#2C2C2C]'>Panel Administrativo</h1>
+                  <p className='text-gray-600'>Sistema de Control de Asistencia</p>
+                </div>
               </div>
-              <div>
-                <h1 className='text-2xl font-bold text-[#2C2C2C]'>Panel Administrativo</h1>
-                <p className='text-gray-600'>Sistema de Control de Asistencia</p>
+
+              {/* Branch and Date Info */}
+              <div className='flex items-center space-x-6 text-sm'>
+                <div className='flex items-center space-x-2 bg-[#004E64]/5 px-3 py-2 rounded-lg'>
+                  <Building className='w-4 h-4 text-[#004E64]' />
+                  <span className='font-medium text-[#004E64]'>Sucursal: {currentBranch?.name}</span>
+                </div>
+                <div className='flex items-center space-x-2 bg-[#00B179]/5 px-3 py-2 rounded-lg'>
+                  <Calendar className='w-4 h-4 text-[#00B179]' />
+                  <span className='font-medium text-[#00B179]'>{currentDate}</span>
+                </div>
               </div>
             </div>
+
             <Button
               onClick={onLogout}
               variant='outline'
@@ -45,126 +70,206 @@ export function AdminDashboard ({ employees, clockRecords, onLogout }: AdminDash
       </div>
 
       <div className='max-w-7xl mx-auto p-6'>
-        {/* Stats Cards */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-          <Card className='border-0 shadow-sm'>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-gray-600'>Empleados Activos</CardTitle>
-              <Users className='h-4 w-4 text-[#004E64]' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-[#2C2C2C]'>{activeEmployees}</div>
-              <p className='text-xs text-gray-600'>Total de empleados habilitados</p>
-            </CardContent>
-          </Card>
-
-          <Card className='border-0 shadow-sm'>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-gray-600'>Clock Ins Hoy</CardTitle>
-              <UserCheck className='h-4 w-4 text-[#00B179]' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-[#00B179]'>{clockInsToday}</div>
-              <p className='text-xs text-gray-600'>Entradas registradas hoy</p>
-            </CardContent>
-          </Card>
-
-          <Card className='border-0 shadow-sm'>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium text-gray-600'>Clock Outs Hoy</CardTitle>
-              <UserX className='h-4 w-4 text-[#FF914D]' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-[#FF914D]'>{clockOutsToday}</div>
-              <p className='text-xs text-gray-600'>Salidas registradas hoy</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Navigation Cards */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <Card
-            className='border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow'
-            onClick={() => {}}
-          >
-            <CardHeader>
-              <div className='flex items-center space-x-3'>
-                <div className='w-12 h-12 bg-[#004E64] rounded-lg flex items-center justify-center'>
-                  <FileText className='w-6 h-6 text-white' />
-                </div>
-                <div>
-                  <CardTitle className='text-[#2C2C2C]'>Reportes de Asistencia</CardTitle>
-                  <p className='text-gray-600 text-sm'>Consulta y exporta registros de entrada y salida</p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Button className='w-full bg-[#004E64] hover:bg-[#004E64]/90'>Ver Reportes</Button>
-            </CardContent>
-          </Card>
-
-          <Card
-            className='border-0 shadow-sm cursor-pointer hover:shadow-md transition-shadow'
-            onClick={() => {}}
-          >
-            <CardHeader>
-              <div className='flex items-center space-x-3'>
-                <div className='w-12 h-12 bg-[#00B179] rounded-lg flex items-center justify-center'>
-                  <Users className='w-6 h-6 text-white' />
-                </div>
-                <div>
-                  <CardTitle className='text-[#2C2C2C]'>Gestión de Empleados</CardTitle>
-                  <p className='text-gray-600 text-sm'>Administra empleados, PINs y huellas dactilares</p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Button className='w-full bg-[#00B179] hover:bg-[#00B179]/90'>Gestionar Empleados</Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <Card className='mt-8 border-0 shadow-sm'>
+        {/* Branch Selector Card */}
+        <Card className='mb-8 border-0 shadow-sm bg-gradient-to-r from-[#004E64]/5 to-[#00B179]/5'>
           <CardHeader>
-            <CardTitle className='text-[#2C2C2C] flex items-center'>
-              <Clock className='w-5 h-5 mr-2' />
-              Actividad Reciente
+            <CardTitle className='text-[#2C2C2C] text-xl flex items-center'>
+              <MapPin className='w-5 h-5 mr-2' />Configuración de Sucursal Activa
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className='space-y-4'>
-              {todayRecords.slice(0, 5).map((record) => (
-                <div key={record.id} className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>
+            <div className='flex items-center justify-between'>
+              <div className='flex-1'>
+                <p className='text-gray-600 mb-2'>
+                  Selecciona la sucursal donde se registrarán las asistencias. Esta configuración afecta todos los
+                  registros de clock in/out.
+                </p>
+                <div className='text-sm text-gray-500'>
+                  📍 <strong>Dirección actual:</strong> {currentBranch.address}
+                </div>
+                {currentBranch.manager !== undefined && (
+                  <div className='text-sm text-gray-500 mt-1'>
+                    👤 <strong>Encargado:</strong> {currentBranch.manager}
+                  </div>
+                )}
+              </div>
+              <div className='flex items-center space-x-3'>
+                <div className='text-right'>
+                  <p className='text-sm font-medium text-[#2C2C2C] mb-1'>Sucursal Activa:</p>
+                  {/* <Select
+                    value={currentBranch.id}
+                    onValueChange={(value) => {
+                      const branch = availableBranches.find((b) => b.id === value)
+                      if (branch) onBranchChange(branch)
+                    }}
+                  >
+                    <SelectTrigger className="w-56 border-2 border-[#004E64] text-[#004E64] bg-white hover:bg-[#004E64]/5">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableBranches.map((branch) => (
+                        <SelectItem key={branch.id} value={branch.id}>
+                          <div className="flex items-center space-x-2">
+                            <Building className="w-4 h-4" />
+                            <div className="text-left">
+                              <div className="font-medium">{branch.name}</div>
+                              <div className="text-xs text-gray-500 truncate max-w-48">{branch.address}</div>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select> */}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Main Navigation Buttons */}
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
+          <Card
+            className='border-0 shadow-sm cursor-pointer hover:shadow-md transition-all hover:scale-105'
+            onClick={() => {}}
+          >
+            <CardHeader className='pb-3'>
+              <div className='flex items-center space-x-3'>
+                <div className='w-12 h-12 bg-[#004E64] rounded-lg flex items-center justify-center'>
+                  <Users className='w-6 h-6 text-white' />
+                </div>
+                <div>
+                  <CardTitle className='text-[#2C2C2C] text-lg'>Empleados</CardTitle>
+                  <p className='text-gray-600 text-sm'>Ver estado y gestionar empleados</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Button className='w-full bg-[#004E64] hover:bg-[#004E64]/90'>Ver Lista de Empleados</Button>
+            </CardContent>
+          </Card>
+
+          <Card
+            className='border-0 shadow-sm cursor-pointer hover:shadow-md transition-all hover:scale-105'
+            onClick={() => {}}
+          >
+            <CardHeader className='pb-3'>
+              <div className='flex items-center space-x-3'>
+                <div className='w-12 h-12 bg-[#00B179] rounded-lg flex items-center justify-center'>
+                  <FileText className='w-6 h-6 text-white' />
+                </div>
+                <div>
+                  <CardTitle className='text-[#2C2C2C] text-lg'>Reportes</CardTitle>
+                  <p className='text-gray-600 text-sm'>Consultar horas y asistencia</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Button className='w-full bg-[#00B179] hover:bg-[#00B179]/90'>Ver Reportes</Button>
+            </CardContent>
+          </Card>
+
+          <Card
+            className='border-0 shadow-sm cursor-pointer hover:shadow-md transition-all hover:scale-105'
+            onClick={() => {}}
+          >
+            <CardHeader className='pb-3'>
+              <div className='flex items-center space-x-3'>
+                <div className='w-12 h-12 bg-[#FF914D] rounded-lg flex items-center justify-center'>
+                  <UserPlus className='w-6 h-6 text-white' />
+                </div>
+                <div>
+                  <CardTitle className='text-[#2C2C2C] text-lg'>Registrar empleado</CardTitle>
+                  <p className='text-gray-600 text-sm'>Agregar nuevo empleado</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Button className='w-full bg-[#FF914D] hover:bg-[#FF914D]/90'>Registrar Empleado</Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Configuration Section */}
+        <Card className='mb-8 border-0 shadow-sm'>
+          <CardHeader>
+            <CardTitle className='text-[#2C2C2C] text-xl flex items-center'>
+              <Settings className='w-5 h-5 mr-2' />
+              Configuración del Sistema
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <Card
+                className='border border-[#004E64]/20 cursor-pointer hover:shadow-md transition-all hover:scale-105'
+                onClick={() => {}}
+              >
+                <CardContent className='p-4'>
                   <div className='flex items-center space-x-3'>
-                    <div className='w-8 h-8 bg-[#004E64] rounded-full flex items-center justify-center'>
-                      <span className='text-white text-xs font-bold'>
-                        {record.employeeName
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')}
-                      </span>
+                    <div className='w-10 h-10 bg-[#004E64]/10 rounded-lg flex items-center justify-center'>
+                      <Users className='w-5 h-5 text-[#004E64]' />
                     </div>
                     <div>
-                      <p className='font-medium text-[#2C2C2C]'>{record.employeeName}</p>
-                      <p className='text-sm text-gray-600'>
-                        {record.clockIn !== null && record.clockOut === null && `Entrada: ${record.clockIn !== undefined ? record.clockIn : 'Pendiente'}`}
-                        {record.clockOut !== null && `Salida: ${record.clockOut !== undefined ? record.clockOut : 'Pediente'}`}
-                      </p>
+                      <h3 className='font-semibold text-[#2C2C2C]'>Gestión de Roles</h3>
+                      <p className='text-sm text-gray-600'>Crear y administrar roles de empleados</p>
                     </div>
                   </div>
-                  <div
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      record.clockOut !== undefined ? 'bg-[#FF914D]/10 text-[#FF914D]' : 'bg-[#00B179]/10 text-[#00B179]'
-                    }`}
-                  >
-                    {record.clockOut !== undefined ? 'Salida' : 'Entrada'}
+                </CardContent>
+              </Card>
+
+              <Card
+                className='border border-[#00B179]/20 cursor-pointer hover:shadow-md transition-all hover:scale-105'
+                onClick={() => {}}
+              >
+                <CardContent className='p-4'>
+                  <div className='flex items-center space-x-3'>
+                    <div className='w-10 h-10 bg-[#00B179]/10 rounded-lg flex items-center justify-center'>
+                      <MapPin className='w-5 h-5 text-[#00B179]' />
+                    </div>
+                    <div>
+                      <h3 className='font-semibold text-[#2C2C2C]'>Gestión de Sucursales</h3>
+                      <p className='text-sm text-gray-600'>Administrar sucursales del negocio</p>
+                    </div>
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Key Functions Section */}
+        <Card className='border-0 shadow-sm'>
+          <CardHeader>
+            <CardTitle className='text-[#2C2C2C] text-xl'>Funciones clave</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+              <div className='bg-[#004E64]/5 p-4 rounded-lg text-center'>
+                <div className='text-2xl font-bold text-[#004E64] mb-1'>
+                  {employees.filter((emp) => emp.isActive).length}
                 </div>
-              ))}
-              {todayRecords.length === 0 && (
-                <p className='text-gray-500 text-center py-4'>No hay actividad registrada hoy</p>
-              )}
+                <div className='text-sm text-gray-600'>Empleados Activos</div>
+              </div>
+
+              <div className='bg-[#00B179]/5 p-4 rounded-lg text-center'>
+                <div className='text-2xl font-bold text-[#00B179] mb-1'>
+                  {clockRecords.filter((r) => r.status === 'complete' || r.status === 'in-progress').length}
+                </div>
+                <div className='text-sm text-gray-600'>Presentes Hoy</div>
+              </div>
+
+              <div className='bg-[#FF914D]/5 p-4 rounded-lg text-center'>
+                <div className='text-2xl font-bold text-[#FF914D] mb-1'>
+                  {clockRecords.filter((r) => r.status === 'break').length}
+                </div>
+                <div className='text-sm text-gray-600'>En Descanso</div>
+              </div>
+
+              <div className='bg-red-50 p-4 rounded-lg text-center'>
+                <div className='text-2xl font-bold text-red-600 mb-1'>
+                  {clockRecords.filter((r) => r.status === 'absent').length}
+                </div>
+                <div className='text-sm text-gray-600'>Ausentes</div>
+              </div>
             </div>
           </CardContent>
         </Card>

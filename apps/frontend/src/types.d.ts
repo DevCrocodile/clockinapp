@@ -17,18 +17,18 @@ export interface FieldTextAreaProps {
   required?: boolean
 }
 
-export interface ConfirmationData {
-  type: 'success' | 'error'
-  message: string
-  employeeName?: string
-  time?: string
-}
-
 export interface Employee {
   id: string
   name: string
-  email: string
-  pin: string
+  phone: string
+  pin?: string
+  role: string
+  branch: string
+  expectedHours: number
+  schedule: {
+    start: string
+    end: string
+  }
   isActive: boolean
   hasFingerprint: boolean
 }
@@ -40,4 +40,25 @@ export interface ClockRecord {
   date: string
   clockIn?: string
   clockOut?: string
+  breakStart?: string
+  breakEnd?: string
+  totalHours?: number
+  status: 'complete' | 'in-progress' | 'break' | 'absent'
+}
+
+export interface ConfirmationData {
+  type: 'success' | 'error'
+  message: string
+  employeeName?: string
+  time?: string
+}
+
+export interface Branch {
+  id: string
+  name: string
+  address: string
+  phone: string
+  manager: string
+  isActive: boolean
+  createdAt: string
 }
