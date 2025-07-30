@@ -2,6 +2,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '../shared/Card'
 import { Button } from '../shared/Button'
 import { LogOut, Users, FileText, Building, Calendar, MapPin, UserPlus, Settings } from 'lucide-react'
 import type { Employee, ClockRecord, Branch } from '@/types'
+import { useSelect } from '@/hooks/useSelect'
+import { Select } from '../shared/Select'
 
 interface AdminDashboardProps {
   employees: Employee[]
@@ -26,7 +28,10 @@ export function AdminDashboard ({
     month: 'long',
     year: 'numeric'
   })
-
+  const branch = useSelect({
+    required: true,
+    defaultValue: currentBranch.id
+  })
   return (
     <div className='min-h-screen bg-[#F4F6F8]'>
       {/* Header */}
@@ -96,30 +101,7 @@ export function AdminDashboard ({
               <div className='flex items-center space-x-3'>
                 <div className='text-right'>
                   <p className='text-sm font-medium text-[#2C2C2C] mb-1'>Sucursal Activa:</p>
-                  {/* <Select
-                    value={currentBranch.id}
-                    onValueChange={(value) => {
-                      const branch = availableBranches.find((b) => b.id === value)
-                      if (branch) onBranchChange(branch)
-                    }}
-                  >
-                    <SelectTrigger className="w-56 border-2 border-[#004E64] text-[#004E64] bg-white hover:bg-[#004E64]/5">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableBranches.map((branch) => (
-                        <SelectItem key={branch.id} value={branch.id}>
-                          <div className="flex items-center space-x-2">
-                            <Building className="w-4 h-4" />
-                            <div className="text-left">
-                              <div className="font-medium">{branch.name}</div>
-                              <div className="text-xs text-gray-500 truncate max-w-48">{branch.address}</div>
-                            </div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select> */}
+                  <Select field={branch} options={availableBranches.map(branch => ({ value: branch.id, label: branch.name }))} />
                 </div>
               </div>
             </div>
