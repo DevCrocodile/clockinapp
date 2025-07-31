@@ -30,7 +30,7 @@ export function AdminDashboard ({
   })
   const branch = useSelect({
     required: true,
-    defaultValue: currentBranch.id
+    defaultValue: currentBranch.name
   })
   return (
     <div className='min-h-screen bg-[#F4F6F8]'>
