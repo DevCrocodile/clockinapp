@@ -183,7 +183,7 @@ export function AdminDashboard ({
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <Card
                 className='border border-[#004E64]/20 cursor-pointer hover:shadow-md transition-all hover:scale-105'
-                onClick={() => {}}
+                onClick={() => { window.location.href = '/admin/roles/register' }}
               >
                 <CardContent className='p-4'>
                   <div className='flex items-center space-x-3'>
