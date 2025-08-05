@@ -152,7 +152,7 @@ export function AdminDashboard ({
 
           <Card
             className='border-0 shadow-sm cursor-pointer hover:shadow-md transition-all hover:scale-105'
-            onClick={() => {}}
+            onClick={() => { window.location.href = '/admin/employees/register' }}
           >
             <CardHeader className='pb-3'>
               <div className='flex items-center space-x-3'>

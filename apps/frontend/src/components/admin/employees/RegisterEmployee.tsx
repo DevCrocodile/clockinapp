@@ -1,5 +1,5 @@
 import { Button } from '@/components/shared/Button'
-import { ArrowLeft, UserPlus, Building, Clock, Key, Fingerprint } from 'lucide-react'
+import { ArrowLeft, UserPlus, Building, Clock, Key, Fingerprint, Coffee } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shared/Card'
 import { useState } from 'react'
 import { Input } from '@/components/shared/Input'
@@ -15,36 +15,6 @@ interface RegisterEmployeeProps {
   onSave: () => void
 }
 export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterEmployeeProps): React.ReactElement {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    role: '',
-    branch: 'La Paz',
-    startTime: '08:00',
-    endTime: '17:00',
-    expectedHours: 8,
-    pin: '',
-    authMethods: {
-      pin: false,
-      fingerprint: false
-    },
-    hasLunchBreak: false,
-    lunchStart: '12:00',
-    lunchEnd: '13:00',
-    hasSplitSchedule: false,
-    morningEnd: '12:00',
-    afternoonStart: '14:00',
-    workDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: false,
-      sunday: false
-    }
-  })
-
   const employeeNameField = useField({ type: 'text', required: true })
   const phoneField = useField({ type: 'tel', required: true })
   const roleSelect = useSelect({ required: true })
@@ -58,6 +28,39 @@ export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterE
   const afternoonClockInField = useField({ type: 'time' })
   const afternoonClockOutField = useField({ type: 'time' })
   const pinField = useField({ type: 'password', required: true })
+  const splitScheduleField = useField({ type: 'checkbox' })
+  const lunchBreakField = useField({ type: 'checkbox' })
+
+  const [formData, setFormData] = useState({
+    name: employeeNameField.value,
+    phone: phoneField.value,
+    role: roleSelect.value,
+    branch: branchSelect.value,
+    startTime: clockInField.value,
+    endTime: clockOutField.value,
+    expectedHours: 8,
+    pin: pinField.value,
+    authMethods: {
+      pin: false,
+      fingerprint: false
+    },
+    hasLunchBreak: lunchBreakField.value,
+    lunchStart: lunchStartField.value,
+    lunchEnd: lunchEndField.value,
+    hasSplitSchedule: splitScheduleField.value,
+    morningEnd: morningClockOutField.value,
+    afternoonStart: afternoonClockInField.value,
+    workDays: {
+      monday: true,
+      tuesday: true,
+      wednesday: true,
+      thursday: true,
+      friday: true,
+      saturday: false,
+      sunday: false
+    }
+  })
+
   // Remover estas líneas:
   // const roles = ["secretaria", "repartidor", "contador", "gerente", "vendedor"]
   // const branches = ["La Paz", "Santa Cruz", "Cochabamba", "Sucre"]
@@ -104,7 +107,7 @@ export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterE
   }
 
   const calculateHours = (): number => {
-    if (formData.hasSplitSchedule) {
+    if (formData.hasSplitSchedule !== '') {
       // Calcular horas para horario quebrado
       const morningStart = new Date(`2000-01-01T${formData.startTime}:00`)
       const morningEnd = new Date(`2000-01-01T${formData.morningEnd}:00`)
@@ -122,7 +125,7 @@ export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterE
       let totalHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60)
 
       // Restar tiempo de comida si aplica
-      if (formData.hasLunchBreak) {
+      if (formData.hasLunchBreak !== '') {
         const lunchStart = new Date(`2000-01-01T${formData.lunchStart}:00`)
         const lunchEnd = new Date(`2000-01-01T${formData.lunchEnd}:00`)
         const lunchHours = (lunchEnd.getTime() - lunchStart.getTime()) / (1000 * 60 * 60)
@@ -227,17 +230,13 @@ export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterE
               {/* Split Schedule Option */}
               <div className='space-y-4'>
                 <div className='flex items-center space-x-3'>
-                  {/* <Checkbox
-                    id='split-schedule'
-                    checked={formData.hasSplitSchedule}
-                    onCheckedChange={(checked) => handleInputChange('hasSplitSchedule', checked as boolean)}
-                  />
-                  <Label htmlFor='split-schedule' className='flex items-center space-x-2 cursor-pointer'>
+                  <Input field={splitScheduleField} />
+                  <p className='flex items-center space-x-2 cursor-pointer'>
                     <Clock className='w-4 h-4 text-[#FF914D]' />
                     <span className='font-medium'>Horario Quebrado (mañana y tarde)</span>
-                  </Label> */}
+                  </p>
                 </div>
-                {formData.hasSplitSchedule
+                {formData.hasSplitSchedule !== ''
                   ? (
                     <div className='ml-6 space-y-4'>
                       <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
@@ -297,8 +296,8 @@ export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterE
                         />
                       </div>
 
-                      <div className='space-y-2'>
-                        <p className='text-[#2C2C2C] font-medium'>Horas por Día</p>
+                      <div className='space-y-1'>
+                        <p className='text-[#2C2C2C] text-sm font-semibold'>Horas por Día</p>
                         <div className='h-10 px-3 py-2 border-2 border-gray-200 rounded-md bg-gray-50 flex items-center'>
                           <span className='text-[#004E64] font-medium'>{calculateHours()} horas</span>
                         </div>
@@ -308,21 +307,17 @@ export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterE
               </div>
 
               {/* Lunch Break Option */}
-              {!formData.hasSplitSchedule && (
+              {formData.hasSplitSchedule === '' && (
                 <div className='space-y-4'>
                   <div className='flex items-center space-x-3'>
-                    {/* <Checkbox
-                      id='lunch-break'
-                      checked={formData.hasLunchBreak}
-                      onCheckedChange={(checked) => handleInputChange('hasLunchBreak', checked as boolean)}
-                    />
-                    <Label htmlFor='lunch-break' className='flex items-center space-x-2 cursor-pointer'>
+                    <Input field={lunchBreakField} />
+                    <p className='flex items-center space-x-2 cursor-pointer'>
                       <Coffee className='w-4 h-4 text-[#00B179]' />
                       <span className='font-medium'>Hora de Comida</span>
-                    </Label> */}
+                    </p>
                   </div>
 
-                  {formData.hasLunchBreak && (
+                  {formData.hasLunchBreak !== '' && (
                     <div className='ml-6 grid grid-cols-2 gap-4'>
                       <div className='space-y-2'>
                         <Input
@@ -369,11 +364,11 @@ export function RegisterEmployee ({ roles, branches, onBack, onSave }: RegisterE
                             ? (
                               <>
                                 <div className='font-medium'>{calculateHours()}h</div>
-                                {formData.hasSplitSchedule
+                                {formData.hasSplitSchedule !== ''
                                   ? (
                                     <div className='text-xs opacity-90'>Quebrado</div>
                                     )
-                                  : formData.hasLunchBreak
+                                  : formData.hasLunchBreak !== ''
                                     ? (
                                       <div className='text-xs opacity-90'>+Comida</div>
                                       )
